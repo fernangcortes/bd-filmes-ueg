@@ -237,8 +237,8 @@ Padrões de fábrica (zero configuração para começar): LLM local Ollama + emb
 
 | Marco | Conteúdo | Critério de conclusão | Estimativa |
 |---|---|---|---|
-| **M0 — Fundação** | Repo público no GitHub do Fernando; Docker Compose (Postgres+pgvector); schema; `instituicoes.yaml` com UEG; página LGPD/opt-out no app; scripts .bat | App abre com página LGPD; banco sobe com 1 clique | ~1 semana |
-| **M1 — BDTD no ar** | Coletores OAI+REST, lake bruto, carga completa das ~1.800 teses | `documento` populado; consulta SQL por tema retorna teses RENAC/TECCER | ~1 semana |
+| **M0 — Fundação** ✅ | Repo público no GitHub do Fernando; Docker Compose (Postgres+pgvector); schema; `instituicoes.yaml` com UEG; página LGPD/opt-out no app; scripts .bat | ✅ App abre com página LGPD; banco sobe com 1 clique | concluído 05/08 |
+| **M1 — BDTD no ar** ✅ | Coletores OAI+REST, lake bruto, carga completa das teses | ✅ `documento` populado: **1.748 teses/dissertações, 2.032 pessoas (1.587 com Lattes)**; botão "Atualizar dados" ativo. Nota: OAI local com índice vazio (migração DSpace 10) → varredura via REST discover com retries; OAI reservado para incrementais | concluído 05/08 |
 | **M2 — CKAN + Laboratórios** | Coletores F2 e F3 (33 unidades); tabelas `projeto_extensao` e `laboratorio` | Fichas de lab com prédio/sala/e-mail no banco | ~1–2 semanas |
 | **M3 — OpenAlex + consolidação** | Coletor F4; fusão light (§6.5) | Autores com ORCID consolidados; verificação A6 | ~1 semana |
 | **M4 — Busca básica** | Embeddings bge-m3 (carga inicial); busca híbrida no Streamlit: tema → resultados ranqueados com fonte | Critério A1 | ~2 semanas |

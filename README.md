@@ -58,7 +58,8 @@ Para encerrar, feche a janela preta do terminal. Seus dados ficam guardados.
 ## Roadmap
 
 - **M0 — Fundação** ✅ (repo, banco, schema, página LGPD/opt-out)
-- M1 — Coleta BDTD/UEG · M2 — CKAN + laboratórios · M3 — OpenAlex + consolidação
+- **M1 — Coleta BDTD/UEG** ✅ (1.748 teses/dissertações, 2.032 pessoas, 1.587 com Lattes — botão "Atualizar dados" ativo)
+- M2 — CKAN + laboratórios · M3 — OpenAlex + consolidação
 - M4 — Busca básica · M5 — Assistente inteligente + roteiro · M6 — Web + síntese + Cabine de APIs
 - M7 — Polimento e demo
 
