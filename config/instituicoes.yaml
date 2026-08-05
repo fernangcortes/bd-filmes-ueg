@@ -1,0 +1,56 @@
+# Cadastro de instituições — Banco de Personagens CriaLab|UEG
+# Regra do Vol. 2 (§3.2): expandir a rede = adicionar uma entrada aqui, não um projeto novo.
+# A UEG é a primeira linha. UFG/UFCAT/UFJ/IF Goiano entram nas fases seguintes.
+
+- nome: Universidade Estadual de Goiás
+  sigla: UEG
+  ror: "https://ror.org/03ta25k06"
+  openalex_id: "I3129565396"
+  wikidata: "Q10387810"
+  circulo: 1
+  fontes:
+    # F1 — BDTD/UEG (DSpace 10.0): teses e dissertações. Verificado ao vivo 04/08/2026.
+    - codigo: F1-BDTD-OAI
+      tipo: dspace10_oai
+      endpoint: "https://bdtd.ueg.br/server/oai/request"
+      metadata_prefix: oai_dc
+      licenca: "Acesso aberto — termo de autorização do autor (Res. CsA 1087/2019)"
+    - codigo: F1-BDTD-REST
+      tipo: dspace10_rest
+      endpoint: "https://bdtd.ueg.br/server/api"
+      licenca: "Acesso aberto — termo de autorização do autor (Res. CsA 1087/2019)"
+
+    # F2 — CKAN Dados Abertos GO: 15 datasets UEG sob CC-BY. API testada ago/2026.
+    - codigo: F2-CKAN
+      tipo: ckan
+      endpoint: "https://dadosabertos.go.gov.br/api/3/action/"
+      organizacao: universidade-estadual-de-goias
+      datasets_prioritarios:
+        - "Projetos/Ações de Extensão e Locais de Execução"
+        - "Cargos e seus ocupantes UEG"
+        - "Bens Imóveis"
+        - "Bens Patrimoniais Móveis"
+      licenca: "CC-BY — creditar: Dados Abertos Goiás"
+
+    # F3 — Laboratórios ueg.br: todas as 33 unidades / 8 câmpus (decisão do gerente).
+    - codigo: F3-LABS
+      tipo: scraping_laboratorios
+      endpoint: "https://www.ueg.br"
+      rate_limit_s: 1
+      janela: "22h-06h"
+      user_agent: "CriaLab-UEG-Harvester/1.0 (+contato: crialab@ueg.br)"
+      respeitar_robots_txt: true
+      unidades: []  # slugs das unidades — descoberta/preenchimento no marco M2
+      licenca: "Páginas públicas institucionais"
+
+    # F4 — OpenAlex: camada de identidade (ORCID) e produção global. CC0.
+    - codigo: F4-OPENALEX
+      tipo: openalex
+      endpoint: "https://api.openalex.org"
+      instituicao_filtro: "institutions.id:I3129565396"
+      polite_pool_mailto: ""  # preencher com e-mail do CriaLab (entra no polite pool)
+      licenca: "CC0"
+
+  estrategia_descoberta: "sondar GET /server/api → HAL JSON = DSpace 7+ (usar REST+OAI); /jspui/ = legado"
+  fallback:
+    - "BDTD nacional: https://bdtd.ibict.br/vufind/ (OAI-PMH, prefixo UEG-2_)"

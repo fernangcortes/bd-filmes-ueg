@@ -1,0 +1,37 @@
+# Cabine de APIs — modelo de configuração.
+# COPIE este arquivo para "apis.yaml" (na mesma pasta) e preencha as chaves que quiser usar.
+# O arquivo apis.yaml NÃO vai para o GitHub (está no .gitignore).
+# Padrão de fábrica: tudo local e gratuito — nenhuma chave é necessária para começar.
+
+llm:
+  provedor_padrao: ollama        # ollama | deepseek | kimi | openrouter
+  ollama:                        # 🟢 local/grátis — roda no seu computador
+    base_url: "http://localhost:11434"
+    modelo: "qwen2.5:14b"
+  deepseek:                      # 💰 custo-benefício — excelente pt-BR, centavos por busca
+    api_key: ""
+    modelo: "deepseek-chat"
+  kimi:                          # 💰 contexto longo — bom para roteiros grandes
+    api_key: ""
+    modelo: "kimi-k2"
+  openrouter:                    # 💎 topo de linha — acesso a Claude/GPT etc.
+    api_key: ""
+    modelo: "anthropic/claude-sonnet-4"
+
+embeddings:
+  provedor: local                # 🟢 local (bge-m3) — padrão; openai | voyage como alternativa
+  openai_api_key: ""
+  voyage_api_key: ""
+
+rerank:
+  provedor: local                # 🟢 local (bge-reranker-v2-m3) — padrão; cohere como alternativa
+  cohere_api_key: ""
+
+websearch:
+  habilitado: false              # liga/desliga a busca web externa por padrão
+  provedor: brave                # brave (🟢 2.000/mês grátis) | tavily (💰) | google_cse | serpapi (💎)
+  brave_api_key: ""
+  tavily_api_key: ""
+  google_cse_key: ""
+  google_cse_cx: ""
+  serpapi_key: ""

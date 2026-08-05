@@ -1,0 +1,28 @@
+[project]
+name = "bd-filmes-ueg"
+version = "0.1.0"
+description = "Banco de Personagens CriaLab|UEG — motor de busca temático (tema → pessoas, locações, equipamentos e pesquisas da UEG) sobre fontes de dados abertas"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+dependencies = [
+    "streamlit>=1.38",
+    "psycopg[binary]>=3.2",
+    "pgvector>=0.3.6",
+    "sqlalchemy>=2.0",
+    "pyyaml>=6.0",
+    "requests>=2.32",
+    "oaipmh-scythe>=0.10",
+    "beautifulsoup4>=4.12",
+    "lxml>=5.0",
+    "fastembed>=0.4",
+    "pypdf>=5.0",
+    "python-docx>=1.1",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = []

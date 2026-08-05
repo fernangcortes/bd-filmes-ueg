@@ -1,0 +1,19 @@
+# Ambiente e dependências
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Dados locais (data lake bruto, banco) — nunca versionar
+dados/
+
+# Chaves de API — nunca versionar (use apis.example.yaml como modelo)
+config/apis.yaml
+.streamlit/secrets.toml
+
+# Documentos internos de pesquisa (permanecem locais)
+docs-pesquisa-implementacao/
+
+# Sistema
+Thumbs.db
+.DS_Store
