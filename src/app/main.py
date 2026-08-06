@@ -49,7 +49,8 @@ if not banco_ok:
 else:
     st.success(
         "Base em operação: teses e dissertações (BDTD), projetos de extensão e "
-        "cargos (Dados Abertos GO, CC-BY) e laboratórios (ueg.br) já coletados. "
+        "cargos (Dados Abertos GO, CC-BY), laboratórios (ueg.br) e produção "
+        "científica global (OpenAlex, CC0) já coletados. "
         "O botão **🔄 Atualizar dados** re-roda todos os coletores com um clique."
     )
 

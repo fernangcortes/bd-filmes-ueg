@@ -2,7 +2,7 @@
 
 M1: BDTD/UEG (REST discover, varredura completa idempotente).
 M2: CKAN Dados Abertos GO (extensão/cargos/bens, CC-BY) + laboratórios ueg.br.
-Próximo marco: OpenAlex (M3).
+M3: OpenAlex (works + authors, CC0) — âncora ORCID da consolidação.
 """
 import sys
 from pathlib import Path
@@ -164,7 +164,49 @@ if st.button("▶️ Atualizar laboratórios agora", type="primary"):
         )
 
 st.divider()
+
+# ---------------- Coletor OpenAlex ----------------
+st.markdown("### 🌐 OpenAlex — produção científica global da UEG")
+st.caption(
+    "API aberta (CC0): ~10 mil artigos/trabalhos da UEG com DOI, resumo e tópicos, "
+    "e os pesquisadores com última afiliação UEG — cada um com ORCID, a chave que "
+    "consolida a mesma pessoa entre BDTD, Dados Abertos e OpenAlex. "
+    "Leva cerca de 5 minutos."
+)
+
+if st.button("▶️ Atualizar OpenAlex agora", type="primary"):
+    from src.coleta.openalex import executar
+
+    barra = st.progress(0.0)
+    area = st.status("Coletando OpenAlex…", expanded=True)
+
+    def progresso_oa(msg: str, frac: float | None) -> None:
+        area.write(msg)
+        if frac is not None:
+            barra.progress(min(max(frac, 0.0), 1.0))
+
+    try:
+        stats = executar(progresso=progresso_oa)
+    except Exception as exc:
+        area.update(label="Falha na coleta", state="error")
+        st.error(
+            f"A API da OpenAlex não respondeu como esperado ({exc.__class__.__name__}). "
+            "Seus dados anteriores continuam intactos — tente novamente mais tarde."
+        )
+    else:
+        area.update(label="Coleta concluída ✅", state="complete", expanded=False)
+        st.success(
+            f"**{stats['works']} works** processados · "
+            f"**{stats['autores_ueg_vinculados']} autoria(s) UEG** vinculadas · "
+            f"**{stats['autores']} pesquisadores** com afiliação UEG "
+            f"({stats['com_orcid']} com ORCID) · "
+            f"base agora com **{stats['pessoas_total']} pessoas** "
+            f"({stats['pessoas_com_orcid']} com ORCID)"
+        )
+        st.caption("Fonte: OpenAlex (CC0).")
+
+st.divider()
 st.info(
-    "Próximo coletor (marco M3): **OpenAlex** — produção científica global da UEG "
-    "com ORCID, que ancora a consolidação de pessoas entre as fontes."
+    "Marco M3 concluído: as 4 fontes do MVP estão ativas. Próximo passo (M4): "
+    "gerar os embeddings e ligar a busca híbrida na página 🔎 Busca."
 )
