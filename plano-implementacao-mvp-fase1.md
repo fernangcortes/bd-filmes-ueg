@@ -63,25 +63,25 @@ Um aplicativo local de busca temática em que um produtor do CriaLab:
 ## 3. Arquitetura do MVP
 
 ```
-┌───────────────────────────────────┐
+┌──────────────────────────────────────────────────────────────────────┐
 │ INTERFACE (Streamlit, pt-BR, para leigos)                            │
 │  Busca simples | Assistente passo a passo | Upload de roteiro        │
 │  Chat refinador | Resultados + resumo IA | Exportar | Cabine APIs    │
 │  Botão "Atualizar dados" | Página LGPD/opt-out                       │
-├───────────────────────────────────┤
+├──────────────────────────────────────────────────────────────────────┤
 │ ORQUESTRADOR DE BUSCA                                                │
-│  Entendimento (LLM: tema/roteiro → tags inteligentes, sub-consultas)│
-│  → Busca híbrida local (SQL + vetorial) → Reranqueador             │
-│  → Busca web externa (opcional, provedor escolhido)                 │
-│  → Síntese final com citações (LLM)                                 │
-├───────────────────────────────────┤
+│  Entendimento (LLM: tema/roteiro → tags inteligentes, sub-consultas) │
+│  → Busca híbrida local (SQL + vetorial) → Reranqueador               │
+│  → Busca web externa (opcional, provedor escolhido)                  │
+│  → Síntese final com citações (LLM)                                  │
+├──────────────────────────────────────────────────────────────────────┤
 │ ARMAZENAMENTO                                                        │
 │  PostgreSQL 16 + pgvector (dados + vetores, via Docker)              │
 │  Data lake bruto: pastas versionadas (XML/JSON/CSV/HTML originais)   │
-├───────────────────────────────────┤
+├──────────────────────────────────────────────────────────────────────┤
 │ COLETA (scripts Python, incrementais)                                │
 │  F1 BDTD OAI+REST | F2 CKAN API | F3 Labs scraping | F4 OpenAlex     │
-└───────────────────────────────────┘
+└──────────────────────────────────────────────────────────────────────┘
 ```
 
 **Decisões-chave já tomadas:**
