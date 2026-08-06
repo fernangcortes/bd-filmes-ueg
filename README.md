@@ -51,7 +51,8 @@ Para encerrar, feche a janela preta do terminal. Seus dados ficam guardados.
 ├── src/
 │   ├── app/                     # interface Streamlit (busca, assistente, LGPD, APIs)
 │   ├── banco/schema.sql         # modelo de dados
-│   └── coleta/ fusao/ busca/ llm/   # (marcos seguintes)
+│   ├── coleta/                  # bdtd.py · ckan.py · laboratorios.py · pessoas.py (M1–M2)
+│   └── fusao/ busca/ llm/       # (marcos seguintes)
 └── docs/ROPA.md                 # registro LGPD de tratamento
 ```
 
@@ -59,7 +60,7 @@ Para encerrar, feche a janela preta do terminal. Seus dados ficam guardados.
 
 - **M0 — Fundação** ✅ (repo, banco, schema, página LGPD/opt-out)
 - **M1 — Coleta BDTD/UEG** ✅ (1.748 teses/dissertações, 2.032 pessoas, 1.587 com Lattes — botão "Atualizar dados" ativo)
-- M2 — CKAN + laboratórios
+- **M2 — CKAN + Laboratórios** ✅ (685 projetos de extensão, 2.096 pessoas, 70 laboratórios em 11 unidades — 3 botões ativos)
 - M3 — OpenAlex + consolidação
 - M4 — Busca básica
 - M5 — Assistente inteligente + roteiro

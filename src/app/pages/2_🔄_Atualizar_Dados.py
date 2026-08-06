@@ -1,7 +1,8 @@
 """Atualização da base — coletores de dados abertos com 1 clique.
 
 M1: BDTD/UEG (REST discover, varredura completa idempotente).
-Próximos marcos: CKAN, laboratórios, OpenAlex.
+M2: CKAN Dados Abertos GO (extensão/cargos/bens, CC-BY) + laboratórios ueg.br.
+Próximo marco: OpenAlex (M3).
 """
 import sys
 from pathlib import Path
@@ -84,8 +85,86 @@ if st.button("▶️ Atualizar BDTD/UEG agora", type="primary"):
         )
 
 st.divider()
+
+# ---------------- Coletor CKAN Dados Abertos GO ----------------
+st.markdown("### 🏛️ Dados Abertos GO — extensão, cargos e bens")
+st.caption(
+    "API CKAN do portal Dados Abertos de Goiás (licença CC-BY): projetos/ações de "
+    "extensão (tema ↔ coordenador ↔ câmpus), ocupantes de cargos de direção "
+    "(nome, Lattes, e-mail funcional) e snapshots brutos de bens imóveis e móveis. "
+    "Leva cerca de 1 minuto."
+)
+
+if st.button("▶️ Atualizar Dados Abertos GO agora", type="primary"):
+    from src.coleta.ckan import executar
+
+    barra = st.progress(0.0)
+    area = st.status("Coletando Dados Abertos GO…", expanded=True)
+
+    def progresso_ckan(msg: str, frac: float | None) -> None:
+        area.write(msg)
+        if frac is not None:
+            barra.progress(min(max(frac, 0.0), 1.0))
+
+    try:
+        stats = executar(progresso=progresso_ckan)
+    except Exception as exc:
+        area.update(label="Falha na coleta", state="error")
+        st.error(
+            f"A fonte não respondeu como esperado ({exc.__class__.__name__}). "
+            "Seus dados anteriores continuam intactos — tente novamente mais tarde."
+        )
+    else:
+        area.update(label="Coleta concluída ✅", state="complete", expanded=False)
+        st.success(
+            f"**{stats['projetos']} projetos/ações de extensão** · "
+            f"**{stats['ocupantes']} ocupantes de cargos** na base · "
+            f"**{stats['coordenadores_vinculados']} coordenadores** já vinculados a pessoas · "
+            f"{stats['snapshots']} snapshots de bens no data lake"
+        )
+        st.caption("Fonte: Dados Abertos Goiás (CC-BY) — crédito obrigatório exibido nos resultados.")
+
+st.divider()
+
+# ---------------- Coletor Laboratórios ueg.br ----------------
+st.markdown("### 🔬 Laboratórios ueg.br — locações e equipamentos")
+st.caption(
+    "Varredura educada (1 requisição/segundo, identificada) pelos subsites das "
+    "33 unidades e 8 câmpus da UEG: fichas de laboratório com prédio, sala, "
+    "equipamentos e contato do responsável. A primeira carga leva ~15–30 minutos; "
+    "as seguintes são mais rápidas (só atualiza o que mudou)."
+)
+
+if st.button("▶️ Atualizar laboratórios agora", type="primary"):
+    from src.coleta.laboratorios import executar
+
+    barra = st.progress(0.0)
+    area = st.status("Coletando laboratórios ueg.br…", expanded=True)
+
+    def progresso_labs(msg: str, frac: float | None) -> None:
+        area.write(msg)
+        if frac is not None:
+            barra.progress(min(max(frac, 0.0), 1.0))
+
+    try:
+        stats = executar(progresso=progresso_labs)
+    except Exception as exc:
+        area.update(label="Falha na coleta", state="error")
+        st.error(
+            f"O portal ueg.br não respondeu como esperado ({exc.__class__.__name__}). "
+            "Seus dados anteriores continuam intactos — tente novamente mais tarde."
+        )
+    else:
+        area.update(label="Coleta concluída ✅", state="complete", expanded=False)
+        st.success(
+            f"**{stats['fichas']} fichas de laboratório** em "
+            f"**{stats['unidades']} unidades** · "
+            f"**{stats['responsaveis']} responsáveis** vinculados · "
+            f"{stats['unidades_sem_pagina']} unidades sem página de laboratórios"
+        )
+
+st.divider()
 st.info(
-    "Próximos coletores (marcos M2 e M3): **Dados Abertos GO** (projetos de extensão, "
-    "cargos, bens), **laboratórios ueg.br** (prédio/sala/equipamento) e **OpenAlex** "
-    "(produção + ORCID)."
+    "Próximo coletor (marco M3): **OpenAlex** — produção científica global da UEG "
+    "com ORCID, que ancora a consolidação de pessoas entre as fontes."
 )

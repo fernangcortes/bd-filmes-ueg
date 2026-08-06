@@ -94,6 +94,7 @@ CREATE TABLE IF NOT EXISTS laboratorio (
     responsavel_email TEXT,
     equipamentos      TEXT[],
     url_fonte         TEXT,
+    metadados         JSONB NOT NULL DEFAULT '{}'::jsonb,  -- cursos, objetivos, câmpus
     embedding         vector(1024),
     coletado_em       TIMESTAMPTZ NOT NULL DEFAULT now(),
     UNIQUE (instituicao_id, nome, unidade)
@@ -110,10 +111,15 @@ CREATE TABLE IF NOT EXISTS projeto_extensao (
     campus          TEXT,
     local_execucao  TEXT,
     url_fonte       TEXT,
+    metadados       JSONB NOT NULL DEFAULT '{}'::jsonb,  -- modalidade, programa, linha, atribuição CC-BY
     embedding       vector(1024),
     coletado_em     TIMESTAMPTZ NOT NULL DEFAULT now(),
     UNIQUE (instituicao_id, titulo, campus)
 );
+
+-- Migrações M2 para bancos já existentes (idempotentes)
+ALTER TABLE laboratorio      ADD COLUMN IF NOT EXISTS metadados JSONB NOT NULL DEFAULT '{}'::jsonb;
+ALTER TABLE projeto_extensao ADD COLUMN IF NOT EXISTS metadados JSONB NOT NULL DEFAULT '{}'::jsonb;
 
 -- Log de buscas (auditoria e melhoria do sistema)
 CREATE TABLE IF NOT EXISTS busca_log (

@@ -14,6 +14,9 @@ config/apis.yaml
 # Documentos internos de pesquisa (permanecem locais)
 docs-pesquisa-implementacao/
 
+# Sumários e prompts de sessão (memória operacional local, não publicar)
+docs/sumarios-prompts-sessoes/
+
 # Sistema
 Thumbs.db
 .DS_Store

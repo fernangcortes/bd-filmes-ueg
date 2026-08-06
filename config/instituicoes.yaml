@@ -40,7 +40,82 @@
       janela: "22h-06h"
       user_agent: "CriaLab-UEG-Harvester/1.0 (+contato: crialab@ueg.br)"
       respeitar_robots_txt: true
-      unidades: []  # slugs das unidades — descoberta/preenchimento no marco M2
+      # Subsites mapeados ao vivo em 06/08/2026 a partir de
+      # https://www.ueg.br/exec/listagem_unidades (8 câmpus sedes + 33 UnUs).
+      # O coletor descobre a página-lista de laboratórios em cada subsite
+      # (home → menus) e tolera subsites sem página de laboratórios.
+      unidades:
+        # Câmpus Central — Sede: Anápolis (CET Henrique Santillo)
+        - { slug: campuscentral,       nome: "Câmpus Central — Anápolis (CET Henrique Santillo)", campus: "Câmpus Central" }
+        - { slug: ccseh,               nome: "UnU Anápolis — CSEH Nelson de Abreu Júnior",        campus: "Câmpus Central" }
+        - { slug: ceres,               nome: "UnU Ceres",                                         campus: "Câmpus Central" }
+        - { slug: goianesia,           nome: "UnU Goianésia",                                     campus: "Câmpus Central" }
+        - { slug: jaragua,             nome: "UnU Jaraguá",                                       campus: "Câmpus Central" }
+        - { slug: luziania,            nome: "UnU Luziânia",                                      campus: "Câmpus Central" }
+        - { slug: pirenopolis,         nome: "UnU Pirenópolis",                                   campus: "Câmpus Central" }
+        - { slug: silvania,            nome: "UnU Silvânia",                                      campus: "Câmpus Central" }
+        # Câmpus Metropolitano — Sede: Aparecida de Goiânia
+        - { slug: campusmetropolitano, nome: "Câmpus Metropolitano — Aparecida de Goiânia",       campus: "Câmpus Metropolitano" }
+        - { slug: eseffego,            nome: "UnU Goiânia — ESEFFEGO",                            campus: "Câmpus Metropolitano" }
+        - { slug: laranjeiras,         nome: "UnU Goiânia — Laranjeiras",                         campus: "Câmpus Metropolitano" }
+        - { slug: inhumas,             nome: "UnU Inhumas",                                       campus: "Câmpus Metropolitano" }
+        - { slug: senadorcanedo,       nome: "UnU Senador Canedo",                                campus: "Câmpus Metropolitano" }
+        - { slug: trindade,            nome: "UnU Trindade",                                      campus: "Câmpus Metropolitano" }
+        # Câmpus Nordeste — Sede: Formosa
+        - { slug: campusnordeste,      nome: "Câmpus Nordeste — Formosa",                         campus: "Câmpus Nordeste" }
+        - { slug: camposbelos,         nome: "UnU Campos Belos",                                  campus: "Câmpus Nordeste" }
+        - { slug: posse,               nome: "UnU Posse",                                         campus: "Câmpus Nordeste" }
+        # Câmpus Cora Coralina — Sede: Cidade de Goiás
+        - { slug: campuscoracoralina,  nome: "Câmpus Cora Coralina — Cidade de Goiás",            campus: "Câmpus Cora Coralina" }
+        - { slug: itaberai,            nome: "UnU Itaberaí",                                      campus: "Câmpus Cora Coralina" }
+        - { slug: itapuranga,          nome: "UnU Itapuranga",                                    campus: "Câmpus Cora Coralina" }
+        - { slug: jussara,             nome: "UnU Jussara",                                       campus: "Câmpus Cora Coralina" }
+        # Câmpus Sul — Sede: Morrinhos
+        - { slug: campussul,           nome: "Câmpus Sul — Morrinhos",                            campus: "Câmpus Sul" }
+        - { slug: caldasnovas,         nome: "UnU Caldas Novas",                                  campus: "Câmpus Sul" }
+        - { slug: ipameri,             nome: "UnU Ipameri",                                       campus: "Câmpus Sul" }
+        - { slug: itumbiara,           nome: "UnU Itumbiara",                                     campus: "Câmpus Sul" }
+        - { slug: piresdorio,          nome: "UnU Pires do Rio",                                  campus: "Câmpus Sul" }
+        # Câmpus Sudoeste — Sede: Quirinópolis
+        - { slug: campussudoeste,      nome: "Câmpus Sudoeste — Quirinópolis",                    campus: "Câmpus Sudoeste" }
+        - { slug: edeia,               nome: "UnU Edéia",                                         campus: "Câmpus Sudoeste" }
+        - { slug: jatai,               nome: "UnU Jataí",                                         campus: "Câmpus Sudoeste" }
+        - { slug: mineiros,            nome: "UnU Mineiros",                                      campus: "Câmpus Sudoeste" }
+        - { slug: santahelena,         nome: "UnU Santa Helena de Goiás",                         campus: "Câmpus Sudoeste" }
+        # Câmpus Oeste — Sede: São Luís de Montes Belos
+        - { slug: campusoeste,         nome: "Câmpus Oeste — São Luís de Montes Belos",           campus: "Câmpus Oeste" }
+        - { slug: ipora,               nome: "UnU Iporá",                                         campus: "Câmpus Oeste" }
+        - { slug: palmeiras,           nome: "UnU Palmeiras de Goiás",                            campus: "Câmpus Oeste" }
+        - { slug: sancler,             nome: "UnU Sanclerlândia",                                 campus: "Câmpus Oeste" }
+        # Câmpus Norte — Sede: Uruaçu
+        - { slug: campusnorte,         nome: "Câmpus Norte — Uruaçu",                             campus: "Câmpus Norte" }
+        - { slug: crixas,              nome: "UnU Crixás",                                        campus: "Câmpus Norte" }
+        - { slug: minacu,              nome: "UnU Minaçu",                                        campus: "Câmpus Norte" }
+        - { slug: niquelandia,         nome: "UnU Niquelândia",                                   campus: "Câmpus Norte" }
+        - { slug: porangatu,           nome: "UnU Porangatu",                                     campus: "Câmpus Norte" }
+        - { slug: saomiguel,           nome: "UnU São Miguel do Araguaia",                        campus: "Câmpus Norte" }
+        # Institutos acadêmicos (subsites próprios; incluem PPGs como o RENAC)
+        - { slug: iacas,               nome: "Instituto Acadêmico de Ciências Agrárias e Sustentabilidade", campus: "Institutos" }
+        - { slug: iacsb,               nome: "Instituto Acadêmico de Ciências da Saúde e Biológicas (RENAC)", campus: "Institutos" }
+        - slug: "iacsb/renac"
+          nome: "PPG RENAC — Anápolis (IACSB)"
+          campus: "Institutos"
+          # Subsite de PPG com páginas próprias por laboratório (plano §6.3,
+          # item 4): entram como config adicional do mesmo parser (formato C).
+          paginas_lab:
+            - "https://www.ueg.br/iacsb/renac/conteudo/24387__lab_educ__laboratorio_de_ecologia_e_educacao_cientifica"
+            - "https://www.ueg.br/iacsb/renac/conteudo/24388__labiotec__biotecnologia"
+            - "https://www.ueg.br/iacsb/renac/conteudo/24389__bioecol__biogeografia_e__ecologia_aquatica"
+            - "https://www.ueg.br/iacsb/renac/conteudo/24392__cobima___conservation_biogeography_and_macroecology"
+            - "https://www.ueg.br/iacsb/renac/conteudo/24396__aracno_lab__diversidade__comportamento_de_aracnideos"
+            - "https://www.ueg.br/iacsb/renac/conteudo/24398__lhcan__herpetologia_e_comportamento_animal"
+            - "https://www.ueg.br/iacsb/renac/conteudo/24395__labifico__ficologia"
+            - "https://www.ueg.br/iacsb/renac/conteudo/24397__themetaland__theory_metacommunity_and_landscape_ecology"
+            - "https://www.ueg.br/iacsb/renac/conteudo/24394__lpd_amp_amp_i_bio__pesquisa__inovacao_de_produtos_da_biodiversidade"
+            - "https://www.ueg.br/iacsb/renac/conteudo/24486__fungilab__micologia_basica_aplicada_e_divulgacao_cientifica"
+            - "https://www.ueg.br/iacsb/renac/conteudo/24391_geoprocessamento"
+        - { slug: iact,                nome: "Instituto Acadêmico de Ciências Tecnológicas",      campus: "Institutos" }
+        - { slug: iael,                nome: "Instituto Acadêmico de Educação e Licenciaturas",   campus: "Institutos" }
       licenca: "Páginas públicas institucionais"
 
     # F4 — OpenAlex: camada de identidade (ORCID) e produção global. CC0.

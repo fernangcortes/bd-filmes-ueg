@@ -47,10 +47,10 @@ if not banco_ok:
         icon="⚠️",
     )
 else:
-    st.info(
-        "A base ainda está vazia — a coleta das fontes (BDTD, Dados Abertos GO, "
-        "laboratórios, OpenAlex) entra em operação nos próximos marcos. "
-        "Quando estiver ativa, o botão **🔄 Atualizar dados** faz tudo com um clique."
+    st.success(
+        "Base em operação: teses e dissertações (BDTD), projetos de extensão e "
+        "cargos (Dados Abertos GO, CC-BY) e laboratórios (ueg.br) já coletados. "
+        "O botão **🔄 Atualizar dados** re-roda todos os coletores com um clique."
     )
 
 st.divider()

@@ -24,7 +24,7 @@ from psycopg.types.json import Jsonb
 
 from src.banco.conexao import conectar, fonte_id_por_codigo, marcar_coleta
 from src.coleta.lago import salvar_json
-from src.coleta.normalizacao import normalizar_nome
+from src.coleta.pessoas import upsert_pessoa, vincular_documento
 
 API = "https://bdtd.ueg.br/server/api"
 OAI = "https://bdtd.ueg.br/server/oai/request"
@@ -165,67 +165,12 @@ def _upsert_documento(cur, fonte_id: int, item: dict) -> int:
 
 def _pessoa_id(cur, nome: str, orcid: str | None, lattes_url: str | None,
                unidade: str | None) -> int | None:
-    """Consolidação light: ORCID exato > nome normalizado."""
-    if not nome:
-        return None
-    nome = nome.strip()
-    norm = normalizar_nome(nome)
-    if orcid and ORCID_RE.match(orcid):
-        cur.execute(
-            """
-            INSERT INTO pessoa (nome_canonico, nome_normalizado, orcid, lattes_url,
-                                unidade, confianca_fusao)
-            VALUES (%s, %s, %s, %s, %s, 'exata')
-            ON CONFLICT (orcid) WHERE orcid IS NOT NULL DO UPDATE SET
-                nome_canonico = COALESCE(pessoa.nome_canonico, EXCLUDED.nome_canonico),
-                lattes_url    = COALESCE(pessoa.lattes_url, EXCLUDED.lattes_url),
-                unidade       = COALESCE(pessoa.unidade, EXCLUDED.unidade)
-            RETURNING id
-            """,
-            (nome, norm, orcid, lattes_url, unidade),
-        )
-        row = cur.fetchone()
-        if row:
-            return row[0]
-        # conflito tratado sem RETURNING (raro): buscar pelo orcid
-        cur.execute("SELECT id FROM pessoa WHERE orcid = %s", (orcid,))
-        row = cur.fetchone()
-        if row:
-            return row[0]
-    cur.execute("SELECT id FROM pessoa WHERE nome_normalizado = %s LIMIT 1", (norm,))
-    row = cur.fetchone()
-    if row:
-        pid = row[0]
-        if lattes_url:
-            cur.execute(
-                "UPDATE pessoa SET lattes_url = COALESCE(lattes_url, %s) WHERE id = %s",
-                (lattes_url, pid),
-            )
-        return pid
-    cur.execute(
-        """
-        INSERT INTO pessoa (nome_canonico, nome_normalizado, orcid, lattes_url,
-                            unidade, confianca_fusao)
-        VALUES (%s, %s, %s, %s, %s, 'exata')
-        RETURNING id
-        """,
-        (nome, norm, orcid if orcid and ORCID_RE.match(orcid) else None,
-         lattes_url, unidade),
-    )
-    return cur.fetchone()[0]
+    """Consolidação light (módulo compartilhado src.coleta.pessoas)."""
+    return upsert_pessoa(cur, nome, orcid=orcid, lattes_url=lattes_url, unidade=unidade)
 
 
 def _papel(cur, pessoa_id: int | None, documento_id: int, papel: str) -> None:
-    if pessoa_id is None:
-        return
-    cur.execute(
-        """
-        INSERT INTO pessoa_documento (pessoa_id, documento_id, papel)
-        VALUES (%s, %s, %s)
-        ON CONFLICT DO NOTHING
-        """,
-        (pessoa_id, documento_id, papel),
-    )
+    vincular_documento(cur, pessoa_id, documento_id, papel)
 
 
 def _zip_pessoas(nomes: list[str], ids: list[str], lattes: list[str]):
