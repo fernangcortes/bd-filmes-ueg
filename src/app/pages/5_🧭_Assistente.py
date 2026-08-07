@@ -80,16 +80,28 @@ if modo == "tema":
         placeholder='Ex.: "documentário sobre o Cerrado e saberes tradicionais de Goiás"…',
     )
 else:
-    arquivo = st.file_uploader(
-        "Roteiro (fica só nesta sessão — nada é salvo no computador)",
-        type=[e.lstrip(".") for e in EXTENSOES_ACEITAS],
-    )
-    if arquivo is not None:
-        try:
-            entrada_texto = extrair_texto(arquivo.name, arquivo.getvalue())
-            st.caption(f"📄 **{arquivo.name}** lido: {len(entrada_texto):,} caracteres de texto.".replace(",", "."))
-        except RoteiroInvalido as exc:
-            st.error(str(exc))
+    aba_arquivo, aba_colar = st.tabs(["📎 Anexar arquivo", "📋 Colar texto (Ctrl+V)"])
+    with aba_arquivo:
+        arquivo = st.file_uploader(
+            "Roteiro (fica só nesta sessão — nada é salvo no computador)",
+            type=[e.lstrip(".") for e in EXTENSOES_ACEITAS],
+        )
+        if arquivo is not None:
+            try:
+                entrada_texto = extrair_texto(arquivo.name, arquivo.getvalue())
+                st.caption(f"📄 **{arquivo.name}** lido: {len(entrada_texto):,} caracteres de texto.".replace(",", "."))
+            except RoteiroInvalido as exc:
+                st.error(str(exc))
+    with aba_colar:
+        colado = st.text_area(
+            "Cole o roteiro/escaleta/sinopse direto aqui",
+            height=220,
+            placeholder="Cole o texto completo — roteiro, escaleta, beat sheet, plano de cenas… "
+                        "funciona igual ao arquivo anexado (fica só nesta sessão).",
+        )
+        if colado.strip():
+            entrada_texto = colado
+            st.caption(f"📋 Texto colado: {len(colado):,} caracteres.".replace(",", "."))
 
 if st.button("🧭 Analisar pedido", type="primary", use_container_width=True):
     if not entrada_texto.strip():

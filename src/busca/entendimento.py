@@ -20,6 +20,7 @@ from collections import Counter
 from dataclasses import dataclass, field
 
 from src.llm import LLMIndisponivel, obter_cliente
+from src.busca.roteiro import MAX_CARACTERES_ROTEIRO
 
 MAX_TAGS = 8
 MAX_SUBCONSULTAS = 6
@@ -136,8 +137,25 @@ def _termos_fortes(texto: str, maximo: int) -> list[str]:
 
 def _blocos_roteiro(texto: str) -> list[str]:
     """Divide o roteiro em blocos temáticos (parágrafos duplos), descarta
-    blocos curtos demais (falas soltas) e limita a quantidade/tamanho."""
+    blocos curtos demais (falas soltas) e limita a quantidade/tamanho.
+    Sem blocos claros (texto corrido), agrupa linhas simples em pacotes."""
     brutos = [b.strip() for b in re.split(r"\n\s*\n", texto) if len(b.strip()) >= 80]
+    if len(brutos) < 2:
+        # fallback: texto sem parágrafos duplos (ex.: PDF corrido) — agrupa
+        # linhas simples em pacotes de ~500 caracteres
+        pacotes, atual = [], ""
+        for linha in texto.splitlines():
+            linha = linha.strip()
+            if not linha:
+                continue
+            if len(atual) + len(linha) > 500 and atual:
+                pacotes.append(atual)
+                atual = linha
+            else:
+                atual = f"{atual} {linha}".strip()
+        if atual:
+            pacotes.append(atual)
+        brutos = [p for p in pacotes if len(p) >= 80]
     # blocos mais informativos primeiro (tamanho como proxy simples)
     brutos.sort(key=len, reverse=True)
     return [_cortar_frase(b, MAX_CARACTERES_SUBCONSULTA) for b in brutos[:MAX_SUBCONSULTAS]]
@@ -179,6 +197,9 @@ def analisar(
     entrada = (entrada or "").strip()
     if not entrada:
         raise ValueError("entrada vazia")
+    if len(entrada) > MAX_CARACTERES_ROTEIRO:  # mesmo teto do arquivo anexado
+        pedaco = entrada[:MAX_CARACTERES_ROTEIRO]
+        entrada = pedaco.rsplit(" ", 1)[0] if " " in pedaco else pedaco
 
     if not forcar_basico:
         try:

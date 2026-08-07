@@ -17,6 +17,9 @@ docs-pesquisa-implementacao/
 # Sumários e prompts de sessão (memória operacional local, não publicar)
 docs/sumarios-prompts-sessoes/
 
+# Bateria de roteiros de teste (conteúdo local de testagem, não publicar)
+testes/
+
 # Sistema
 Thumbs.db
 .DS_Store

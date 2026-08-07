@@ -331,6 +331,10 @@ Total indicativo: **\~10–12 semanas de trabalho do agente**, sem data de corte
 4. **Roteiro não persiste** — o texto extraído (pypdf/python-docx) vive só na sessão do app; nada é gravado em disco nem no banco (LGPD: roteiros podem ser inéditos/sensíveis). O `busca_log` registra apenas `roteiro_anexado=true` + a consulta usada.
 5. **pypdf/python-docx instalados na venv** — estavam declarados no pyproject desde o M4, mas nunca tinham sido instalados de fato (`pip install python-docx pypdf` rodado nesta sessão).
 6. **Tags ligadas reforçam o lexical** — no wizard, as tags inteligentes marcadas são anexadas ao texto de cada sub-consulta (máx. 4), aproveitando o lado lexical (tsvector) da busca híbrida; o lado vetorial dilui menos os termos-chave.
+7. **Ctrl+V no Assistente** — além do arquivo, o 🧭 Assistente aceita roteiro **colado** (aba "Colar texto"), rodando o mesmo pipeline do anexo; o corte de segurança de 30 mil caracteres vale para ambos (movido para `entendimento.analisar`).
+8. **Bateria de testagem com 18 roteiros fictícios** (local, `testes/`, fora do git) — 6 gêneros (documentário, entrevista, podcast, educação, institucional, ficção) × documentos variados (roteiro AV, master scenes, escaleta, sinopse, argumento, beat sheet, plano de cenas) × DOCX/PDF/TXT, com 3 armadilhas (tema não nomeado, professor real da UEG, off-topic) e 2 bordas (PDF "escaneado", >30 mil chars) + script `testes/bateria_roteiros.py` (relatório automático; usa IA quando houver chave). Resultados da 1ª rodada (modo básico) no resumo da sessão 07/08.
+9. **Pendência descoberta pela bateria: piso de relevância** — a busca sempre devolve o top-N, mesmo para tema alheio ao acervo (off-topic "culinária japonesa" tirou sim. máx. 0,837 × 0,841–0,885 dos temas da UEG — sem limiar limpo). Avaliar no M6/M7: aviso de "resultados fracos" ou piso calibrado com dados reais de uso.
+10. **Blocos de roteiro em DOCX** — parágrafos do DOCX passaram a ser separados com linha em branco na extração (são os blocos semânticos); texto corrido sem parágrafos duplos (PDFs) ganhou fallback de empacotamento por ~500 caracteres no modo básico.
 
 ***
 

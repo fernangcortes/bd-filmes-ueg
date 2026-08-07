@@ -33,7 +33,9 @@ def _de_docx(conteudo: bytes) -> str:
     import docx
 
     documento = docx.Document(io.BytesIO(conteudo))
-    return "\n".join(p.text for p in documento.paragraphs)
+    # parágrafos do DOCX são os blocos semânticos do roteiro — separar com
+    # linha em branco para o estágio de entendimento enxergar os blocos
+    return "\n\n".join(p.text for p in documento.paragraphs)
 
 
 def _de_txt(conteudo: bytes) -> str:
