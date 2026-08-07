@@ -91,15 +91,16 @@ def pessoas_dos_documentos(ids: list[int], limite_por_doc: int = 5) -> dict[int,
     return saida
 
 
-def registrar_log(entrada: str, filtros: FiltrosBusca) -> None:
+def registrar_log(entrada: str, filtros: FiltrosBusca, roteiro_anexado: bool = False) -> None:
     """Auditoria mínima da busca (tabela busca_log do schema)."""
     try:
         conn = psycopg.connect(DB_URL, connect_timeout=3)
         with conn.cursor() as cur:
             cur.execute(
-                "INSERT INTO busca_log (entrada_usuario, tags_usadas) VALUES (%s, %s::jsonb)",
+                "INSERT INTO busca_log (entrada_usuario, roteiro_anexado, tags_usadas) VALUES (%s, %s, %s::jsonb)",
                 (
                     entrada,
+                    roteiro_anexado,
                     __import__("json").dumps(
                         {
                             "tipos": filtros.tipos,
@@ -152,6 +153,7 @@ def buscar_agrupada(
     consulta: str,
     filtros: FiltrosBusca | None = None,
     limite_por_grupo: int = 10,
+    roteiro_anexado: bool = False,
 ) -> RespostaAgrupada:
     """Uma consulta vetorial, cinco buscas ranqueadas — uma por seção
     (teses / dissertações / artigos / extensão / laboratórios). Garante que
@@ -185,7 +187,7 @@ def buscar_agrupada(
 
     ids = [r.id for lista in grupos.values() for r in lista]
     pessoas = pessoas_dos_documentos(ids)
-    registrar_log(consulta, filtros)
+    registrar_log(consulta, filtros, roteiro_anexado=roteiro_anexado)
 
     return RespostaAgrupada(
         consulta=consulta,

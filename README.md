@@ -59,8 +59,9 @@ Para encerrar, feche a janela preta do terminal. Seus dados ficam guardados.
 │   ├── app/                     # interface Streamlit (busca, assistente, LGPD, APIs)
 │   ├── banco/schema.sql         # modelo de dados · vectorstore.py (interface pgvector)
 │   ├── coleta/                  # bdtd.py · ckan.py · laboratorios.py · openalex.py · pessoas.py (M1–M3)
-│   ├── busca/                   # embeddings.py · indexar.py · hibrida.py (M4)
-│   └── fusao/ llm/              # (marcos seguintes)
+│   ├── busca/                   # embeddings.py · indexar.py · hibrida.py (M4) · roteiro.py · entendimento.py (M5)
+│   ├── llm/                     # cliente multi-provedor: DeepSeek · Kimi · OpenRouter · Ollama (M5)
+│   └── fusao/                   # (marcos seguintes)
 └── docs/ROPA.md                 # registro LGPD de tratamento
 ```
 
@@ -71,7 +72,7 @@ Para encerrar, feche a janela preta do terminal. Seus dados ficam guardados.
 - **M2 — CKAN + Laboratórios** ✅ (685 projetos de extensão, 2.096 pessoas, 70 laboratórios em 11 unidades — 3 botões ativos)
 - **M3 — OpenAlex + consolidação** ✅ (9.941 works, 4.825 pesquisadores UEG, 8.618 pessoas na base — 3.074 com ORCID; critério A6 verificado: 923 pessoas em 2 fontes, 63 em 3; 4 botões ativos)
 - **M4 — Busca básica** ✅ (embeddings locais `multilingual-e5-large` via fastembed/CPU — mesma dimensão 1024 do bge-m3 previsto, ver §12.3 do plano; **13.200/13.200 vetores indexados**; busca híbrida RRF vetorial+lexical em **5 seções ranqueadas** (teses · dissertações · artigos · extensão · laboratórios) na página 🔎 Busca — critério A1 verificado com índice 100%; tsvector em coluna gerada com índice GIN (busca quente ~0,5 s); indexação retomável por botão no app ou `indexar.bat`. Decisões §12.3 e §12.4)
-- M5 — Assistente inteligente + roteiro
+- **M5 — Assistente inteligente** 🔄 (página 🧭 Assistente: tema ou roteiro PDF/TXT/DOCX → tags inteligentes + sub-consultas → busca híbrida por assunto, com chat refinador; entendimento por **API online** — DeepSeek padrão, Kimi/OpenRouter opcionais, decisão §12.5 — com modo básico sem IA como fallback; Cabine ⚙️ mínima funcional para colar chaves)
 - M6 — Web + síntese + Cabine de APIs
 - M7 — Polimento e demo
 
