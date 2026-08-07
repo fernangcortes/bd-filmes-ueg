@@ -39,6 +39,18 @@ col2.metric("Documentos", contar("documento") if banco_ok else "—")
 col3.metric("Pessoas", contar("pessoa") if banco_ok else "—")
 col4.metric("Laboratórios", contar("laboratorio") if banco_ok else "—")
 
+if banco_ok:
+    conn = conectar()
+    with conn.cursor() as cur:
+        cur.execute("SELECT count(*), count(embedding) FROM documento")
+        _tot, _emb = cur.fetchone()
+    conn.close()
+    if _emb < _tot:
+        st.caption(
+            f"🧠 Busca inteligente: **{_emb:,} de {_tot:,}** documentos indexados "
+            f"({_emb / _tot:.0%}) — continue em 🔄 Atualizar dados → Indexar embeddings.".replace(",", ".")
+        )
+
 if not banco_ok:
     st.warning(
         "O banco de dados não respondeu. Verifique se o **Docker Desktop** está "

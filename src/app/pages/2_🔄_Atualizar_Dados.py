@@ -3,6 +3,7 @@
 M1: BDTD/UEG (REST discover, varredura completa idempotente).
 M2: CKAN Dados Abertos GO (extensão/cargos/bens, CC-BY) + laboratórios ueg.br.
 M3: OpenAlex (works + authors, CC0) — âncora ORCID da consolidação.
+M4: indexação de embeddings locais (busca por significado) — retomável.
 """
 import sys
 from pathlib import Path
@@ -206,7 +207,93 @@ if st.button("▶️ Atualizar OpenAlex agora", type="primary"):
         st.caption("Fonte: OpenAlex (CC0).")
 
 st.divider()
+
+# ---------------- Indexação de embeddings (M4) ----------------
+st.markdown("### 🧠 Indexar embeddings — preparar a busca inteligente")
+st.caption(
+    "Transforma cada documento num vetor de significado (modelo multilíngue local, "
+    "roda no próprio computador, sem enviar nada para a internet). É o que faz a "
+    "busca da página 🔎 encontrar por **tema**, e não só por palavra exata. "
+    "A primeira carga é a mais demorada (~1–2 h para os ~13 mil registros); "
+    "pode parar a qualquer momento e continuar depois — ela sempre segue de onde parou."
+)
+
+from src.banco.vectorstore import PgVectorStore
+
+loja_prog = PgVectorStore()
+try:
+    progresso_idx = loja_prog.progresso_indexacao()
+finally:
+    loja_prog.close()
+
+ROTULOS_TABELA = {
+    "documento": "Documentos (teses, artigos, projetos, fichas)",
+    "laboratorio": "Laboratórios",
+    "projeto_extensao": "Projetos de extensão",
+}
+total_geral = sum(t for t, _ in progresso_idx.values())
+feitos_geral = sum(c for _, c in progresso_idx.values())
+linhas_idx = [
+    (ROTULOS_TABELA[t], c, t_, f"{c / t_:.0%}" if t_ else "—")
+    for t, (t_, c) in progresso_idx.items()
+]
+st.dataframe(
+    linhas_idx,
+    column_config={0: "Coleção", 1: "Indexados", 2: "Total", 3: "%"},
+    use_container_width=True,
+    hide_index=True,
+)
+st.progress(feitos_geral / max(total_geral, 1), text=f"{feitos_geral:,} de {total_geral:,} registros indexados".replace(",", "."))
+
+reindexar = st.checkbox(
+    "Reindexar tudo do zero (apaga os vetores existentes — só use se orientado)",
+    value=False,
+)
+
+if st.button("▶️ Indexar embeddings agora", type="primary"):
+    from src.busca.indexar import executar, zerar_embeddings
+
+    if reindexar:
+        with st.spinner("Apagando vetores antigos…"):
+            zerar_embeddings()
+
+    barra = st.progress(0.0)
+    area = st.status("Indexando embeddings…", expanded=True)
+
+    def progresso_emb(msg: str, frac: float | None) -> None:
+        area.write(msg)
+        if frac is not None:
+            barra.progress(min(max(frac, 0.0), 1.0))
+
+    try:
+        stats = executar(progresso=progresso_emb)
+    except Exception as exc:
+        area.update(label="Falha na indexação", state="error")
+        st.error(
+            f"Não consegui concluir a indexação ({exc.__class__.__name__}). "
+            "O que já foi indexado permanece salvo — tente novamente."
+        )
+    else:
+        if stats["concluido"]:
+            area.update(label="Indexação concluída ✅", state="complete", expanded=False)
+            st.success(
+                f"**{stats['processados_nesta_rodada']} registros** indexados nesta rodada · "
+                f"**{stats['pendentes']} pendentes** · "
+                f"velocidade média: {stats['velocidade']} registros/s · "
+                "a página 🔎 Busca está pronta!"
+            )
+        else:
+            area.update(label="Rodada concluída (parcial)", state="complete", expanded=False)
+            st.info(
+                f"**{stats['processados_nesta_rodada']} registros** indexados nesta rodada · "
+                f"restam **{stats['pendentes']}**. Clique no botão de novo para continuar "
+                "— a indexação segue de onde parou."
+            )
+        st.rerun()
+
+st.divider()
 st.info(
-    "Marco M3 concluído: as 4 fontes do MVP estão ativas. Próximo passo (M4): "
-    "gerar os embeddings e ligar a busca híbrida na página 🔎 Busca."
+    "Marco M4 concluído: as 4 fontes coletam com 1 clique e a busca híbrida "
+    "(significado + palavras) está ativa na página 🔎 Busca. Próximo passo (M5): "
+    "assistente de refinamento com tags inteligentes e upload de roteiro."
 )

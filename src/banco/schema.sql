@@ -121,6 +121,11 @@ CREATE TABLE IF NOT EXISTS projeto_extensao (
 ALTER TABLE laboratorio      ADD COLUMN IF NOT EXISTS metadados JSONB NOT NULL DEFAULT '{}'::jsonb;
 ALTER TABLE projeto_extensao ADD COLUMN IF NOT EXISTS metadados JSONB NOT NULL DEFAULT '{}'::jsonb;
 
+-- Índices vetoriais HNSW (M4) — aceleram a busca por similaridade; idempotentes
+CREATE INDEX IF NOT EXISTS documento_embedding_hnsw        ON documento        USING hnsw (embedding vector_cosine_ops);
+CREATE INDEX IF NOT EXISTS laboratorio_embedding_hnsw      ON laboratorio      USING hnsw (embedding vector_cosine_ops);
+CREATE INDEX IF NOT EXISTS projeto_extensao_embedding_hnsw ON projeto_extensao USING hnsw (embedding vector_cosine_ops);
+
 -- Log de buscas (auditoria e melhoria do sistema)
 CREATE TABLE IF NOT EXISTS busca_log (
     id                BIGSERIAL PRIMARY KEY,

@@ -38,21 +38,29 @@ Audiovisual, UnU Goiânia-Laranjeiras).
 
 **Uso diário:** dê dois cliques em **`iniciar.bat`** — o sistema abre no navegador.
 
+**Busca inteligente (primeira vez):** depois de instalar, rode a indexação dos
+embeddings **uma única vez** — pelo botão "Indexar embeddings" na página
+🔄 Atualizar dados **ou** dois cliques em **`indexar.bat`** (janela preta que
+pode ficar rodando sozinha; leva ~1,5–2 h, pode fechar e continuar depois —
+ela sempre segue de onde parou). Sem isso, a página 🔎 Busca não encontra nada.
+
 Para encerrar, feche a janela preta do terminal. Seus dados ficam guardados.
 
 ## Estrutura
 
 ```
 ├── instalar.bat / iniciar.bat   # operação por 1 clique
+├── indexar.bat                  # carga inicial dos embeddings (busca inteligente)
 ├── docker-compose.yml           # banco PostgreSQL + pgvector
 ├── config/
 │   ├── instituicoes.yaml        # cadastro de instituições (expansão = nova linha)
 │   └── apis.example.yaml        # modelo de chaves (copie para apis.yaml)
 ├── src/
 │   ├── app/                     # interface Streamlit (busca, assistente, LGPD, APIs)
-│   ├── banco/schema.sql         # modelo de dados
+│   ├── banco/schema.sql         # modelo de dados · vectorstore.py (interface pgvector)
 │   ├── coleta/                  # bdtd.py · ckan.py · laboratorios.py · openalex.py · pessoas.py (M1–M3)
-│   └── fusao/ busca/ llm/       # (marcos seguintes)
+│   ├── busca/                   # embeddings.py · indexar.py · hibrida.py (M4)
+│   └── fusao/ llm/              # (marcos seguintes)
 └── docs/ROPA.md                 # registro LGPD de tratamento
 ```
 
@@ -62,7 +70,7 @@ Para encerrar, feche a janela preta do terminal. Seus dados ficam guardados.
 - **M1 — Coleta BDTD/UEG** ✅ (1.748 teses/dissertações, 2.032 pessoas, 1.587 com Lattes — botão "Atualizar dados" ativo)
 - **M2 — CKAN + Laboratórios** ✅ (685 projetos de extensão, 2.096 pessoas, 70 laboratórios em 11 unidades — 3 botões ativos)
 - **M3 — OpenAlex + consolidação** ✅ (9.941 works, 4.825 pesquisadores UEG, 8.618 pessoas na base — 3.074 com ORCID; critério A6 verificado: 923 pessoas em 2 fontes, 63 em 3; 4 botões ativos)
-- M4 — Busca básica
+- **M4 — Busca básica** 🔄 (embeddings locais `multilingual-e5-large` via fastembed/CPU — mesma dimensão 1024 do bge-m3 previsto, ver §12.3 do plano; busca híbrida RRF vetorial+lexical em 3 seções ranqueadas na página 🔎 Busca; indexação retomável por botão no app ou `indexar.bat`. Código validado; **carga inicial dos 13,2 mil vetores em execução**)
 - M5 — Assistente inteligente + roteiro
 - M6 — Web + síntese + Cabine de APIs
 - M7 — Polimento e demo
