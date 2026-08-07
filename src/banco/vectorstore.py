@@ -173,13 +173,10 @@ class PgVectorStore(VectorStore):
         """
         sql = """
         WITH filtrado AS (
+            -- tsv é coluna gerada (STORED) com índice GIN: o tsvector é
+            -- calculado uma vez na gravação, não a cada busca (ver schema.sql)
             SELECT d.id, d.tipo, d.titulo, d.resumo, d.ano, d.url, d.metadados,
-                   d.embedding,
-                   to_tsvector('portuguese',
-                       coalesce(d.titulo, '') || ' ' ||
-                       coalesce(d.resumo, '') || ' ' ||
-                       coalesce(array_to_string(d.palavras_chave, ' '), '')
-                   ) AS sv
+                   d.embedding, d.tsv AS sv
             FROM documento d
             WHERE d.embedding IS NOT NULL
               AND (%(tipos)s::text[] IS NULL OR d.tipo = ANY(%(tipos)s))
@@ -253,7 +250,7 @@ class PgVectorStore(VectorStore):
                     tabela="documento",
                     id=rid,
                     tipo=tipo,
-                    titulo=titulo or "(sem título)",
+                    titulo=(titulo or "").strip() or "(sem título na fonte — ver link)",
                     trecho=trecho or "",
                     ano=ano,
                     url=url,

@@ -135,7 +135,9 @@ if disparar:
         st.stop()
 
     titulos_grupo = {
-        "pesquisas": "📚 Pesquisas (teses, dissertações e artigos)",
+        "teses": "🎓 Teses (BDTD/UEG)",
+        "dissertacoes": "📚 Dissertações (BDTD/UEG)",
+        "artigos": "📄 Artigos e trabalhos (OpenAlex)",
         "extensao": "🏗️ Projetos de extensão",
         "laboratorios": "🔬 Laboratórios e locações",
     }

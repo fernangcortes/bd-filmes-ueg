@@ -37,11 +37,20 @@ LOTE = 64
 # do orçamento de caracteres do modelo)
 # ---------------------------------------------------------------------------
 
+def _cortar_sem_quebrar_palavra(texto: str, limite: int) -> str:
+    """Corta no último espaço antes do limite — um corte no meio da palavra
+    vira subtokens ruins no tokenizer do e5 (ruído no vetor)."""
+    if len(texto) <= limite:
+        return texto
+    pedaco = texto[:limite]
+    return pedaco.rsplit(" ", 1)[0] if " " in pedaco else pedaco
+
+
 def _montar(cabeca: list[str], corpo: str | None) -> str:
     base = "\n".join(p for p in cabeca if p)
     sobra = MAX_CARACTERES - len(base) - 1
     if corpo and sobra > 0:
-        base = (base + "\n" + corpo[:sobra]).strip()
+        base = (base + "\n" + _cortar_sem_quebrar_palavra(corpo, sobra)).strip()
     return base
 
 

@@ -39,13 +39,17 @@ class RespostaAgrupada:
     com seu próprio ranking, sem ser abafada pelas teses)."""
 
     consulta: str
-    grupos: dict[str, list[ResultadoBusca]]            # chave: pesquisas | extensao | laboratorios
+    grupos: dict[str, list[ResultadoBusca]]            # chave: teses | dissertacoes | artigos | extensao | laboratorios
     pessoas_por_documento: dict[int, list[PessoaVinculada]] = field(default_factory=dict)
     segundos: float = 0.0
 
 
 GRUPOS = {
-    "pesquisas": ["tese", "dissertacao", "work"],
+    # Pesquisas em sub-grupos próprios: com 9,9 mil artigos contra 31 teses,
+    # um ranking único de "pesquisas" enterrava as teses RENAC/TECCER (A1).
+    "teses": ["tese"],
+    "dissertacoes": ["dissertacao"],
+    "artigos": ["work"],
     "extensao": ["projeto_extensao"],
     "laboratorios": ["ficha_lab"],
 }
@@ -149,9 +153,10 @@ def buscar_agrupada(
     filtros: FiltrosBusca | None = None,
     limite_por_grupo: int = 10,
 ) -> RespostaAgrupada:
-    """Uma consulta vetorial, três buscas ranqueadas — uma por seção
-    (pesquisas / extensão / laboratórios). Garante que projetos de extensão e
-    laboratórios apareçam mesmo quando as teses dominariam o ranking global.
+    """Uma consulta vetorial, cinco buscas ranqueadas — uma por seção
+    (teses / dissertações / artigos / extensão / laboratórios). Garante que
+    cada categoria apareça com seu próprio ranking, sem ser abafada pelos
+    9,9 mil artigos do OpenAlex (critério A1).
 
     Grupos cujo tipo foi desmarcado nos filtros saem vazios.
     """

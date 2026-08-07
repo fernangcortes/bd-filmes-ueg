@@ -65,8 +65,12 @@ class GeradorEmbeddings:
 
     @staticmethod
     def preparar_texto(texto: str) -> str:
-        """Corta o texto no teto útil do modelo (512 tokens ≈ 1.900 chars)."""
-        return texto[:MAX_CARACTERES]
+        """Corta o texto no teto útil do modelo (512 tokens ≈ 1.900 chars),
+        recuando ao último espaço para não quebrar palavras (subtokens ruins)."""
+        if len(texto) <= MAX_CARACTERES:
+            return texto
+        pedaco = texto[:MAX_CARACTERES]
+        return pedaco.rsplit(" ", 1)[0] if " " in pedaco else pedaco
 
     def embed_documentos(self, textos: list[str], lote: int = 32) -> list[list[float]]:
         """Vetoriza documentos (prefixo 'passage:'). Retorna vetores L2-normalizados."""

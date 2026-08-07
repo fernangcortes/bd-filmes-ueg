@@ -51,10 +51,28 @@ CREATE TABLE IF NOT EXISTS documento (
     pdf_url              TEXT,
     identificador_externo TEXT,            -- handle / DOI / OpenAlex ID / id CKAN
     metadados            JSONB NOT NULL DEFAULT '{}'::jsonb,
-    embedding            vector(1024),     -- bge-m3
+    embedding            vector(1024),     -- e5-large multilíngue (§12.3)
     coletado_em          TIMESTAMPTZ NOT NULL DEFAULT now(),
     UNIQUE (fonte_id, identificador_externo)
 );
+
+-- Busca lexical (M4): tsvector calculado UMA vez na gravação, não a cada busca.
+-- array_to_string é STABLE no Postgres, então a expressão vai numa função
+-- marcada IMMUTABLE (seguro aqui: text[] determinístico) — colunas geradas
+-- exigem expressões imutáveis. O ALTER abaixo vale tanto para instalações
+-- novas quanto para bancos já existentes (idempotente).
+CREATE OR REPLACE FUNCTION tsv_documento(titulo text, resumo text, palavras_chave text[])
+RETURNS tsvector LANGUAGE sql IMMUTABLE PARALLEL SAFE AS $$
+    SELECT to_tsvector('portuguese',
+        coalesce(titulo, '') || ' ' ||
+        coalesce(resumo, '') || ' ' ||
+        coalesce(array_to_string(palavras_chave, ' '), ''))
+$$;
+
+ALTER TABLE documento ADD COLUMN IF NOT EXISTS tsv tsvector
+    GENERATED ALWAYS AS (tsv_documento(titulo, resumo, palavras_chave)) STORED;
+
+CREATE INDEX IF NOT EXISTS documento_tsv_gin ON documento USING GIN (tsv);
 
 -- Pessoas (consolidação light: ORCID exato | URL Lattes idêntica | nome+unidade)
 CREATE TABLE IF NOT EXISTS pessoa (
